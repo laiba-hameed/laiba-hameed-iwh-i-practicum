@@ -1,3 +1,4 @@
+require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const axios = require('axios');
 const app = express();
@@ -14,15 +15,15 @@ const PRIVATE_APP_ACCESS = '';
 
 app.get("/", async (req, res) => {
     try {
-        const response = await axios.get('https://api.hubapi.com/crm/v3/objects/pet', {
+        const response = await axios.get('https://api.hubapi.com/crm/v3/objects/pets?properties=name, type, history', {
             headers: {
                 Authorization: `Bearer ${process.env.PRIVATE_APP_ACCESS}`,
                 'Content-Type': 'application/json'
             }
         });
 
-        const records = response.data.results;
-        res.render("homepage", { records});
+        const pets = response.data.results;
+        res.render("homepage", { pets });
     } catch (error) {
         console.error("Error fetching records:", error.response?.data || error.message);
         res.status(500).send("Error fetching records");
@@ -48,7 +49,7 @@ app.post('/update-pet', async (req, res) => {
     };
 
     try {
-        await axios.post('https://api.hubapi.com/crm/v3/objects/pet', petData, {
+        await axios.post('https://api.hubapi.com/crm/v3/objects/pets?properties=id, name, type, history', petData, {
             headers: {
                 Authorization: `Bearer ${process.env.PRIVATE_APP_ACCESS}`,
                 'Content-Type': 'application/json'

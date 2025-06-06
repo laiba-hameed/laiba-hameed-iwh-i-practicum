@@ -1,28 +1,30 @@
-doctype html
 html
   head
-    title Update Pet Record
+    title Update Pet
   body
-    h1 Add a Pet Record
+    h1 Update an Existing Pet
 
-    form(method="POST" action="/update-pet")
-        div
-            label(for="pet_id") ID:
-            input(type="text" name="pet_id" required)
+    form(action="/update-pet" method="POST")
+      div
+        label(for="pet_id") ID:
+        input(type="text" name="pet_id" required)
+
       div
         label(for="name") Name:
         input(type="text" name="name")
+
       div
         label(for="type") Type:
         select(name="type")
-        option(value="dog") Dog
-        option(value="cat") Cat
-        option(value="other") Other
+          option(value="Dog") Dog
+          option(value="Cat") Cat
+          option(value="Bird") Bird
+          option(value="Other") Other
+
       div
         label(for="history") History:
-        textareat(name="history")
-      div
-        button(type="submit") Submit
+        textarea(name="history")
 
+      button(type="submit") Update Pet
     br
     a(href="/") Return to Home
