@@ -12,15 +12,55 @@ const PRIVATE_APP_ACCESS = '';
 
 // TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data. Pass this data along to the front-end and create a new pug template in the views folder.
 
-// * Code for Route 1 goes here
+app.get("/", async (req, res) => {
+    try {
+        const response = await axios.get('https://api.hubapi.com/crm/v3/objects/pet', {
+            headers: {
+                Authorization: `Bearer ${process.env.PRIVATE_APP_ACCESS}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const records = response.data.results;
+        res.render("homepage", { records});
+    } catch (error) {
+        console.error("Error fetching records:", error.response?.data || error.message);
+        res.status(500).send("Error fetching records");
+    }
+});
 
 // TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
 
-// * Code for Route 2 goes here
+app.get('/update-pet', (req, res) => {
+    res.render('updates', { title: 'Update Pet | HubSpot APIs' });
+});
 
 // TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
 
-// * Code for Route 3 goes here
+app.post('/update-pet', async (req, res) => {
+    const { name, type, history } = req.body;
+    const petData = {
+        properties: {
+            name,
+            type,
+            history
+        }
+    };
+
+    try {
+        await axios.post('https://api.hubapi.com/crm/v3/objects/pet', petData, {
+            headers: {
+                Authorization: `Bearer ${process.env.PRIVATE_APP_ACCESS}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        res.redirect('/');
+    } catch (error) {
+        console.error("Error creating pet:", error.response?.data || error.message);
+        res.status(500).send("Error creating pet");
+    }
+});
 
 /** 
 * * This is sample code to give you a reference for how you should structure your calls. 
