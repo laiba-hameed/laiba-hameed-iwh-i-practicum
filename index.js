@@ -15,7 +15,7 @@ const PRIVATE_APP_ACCESS = '';
 
 app.get("/", async (req, res) => {
     try {
-        const response = await axios.get('https://api.hubapi.com/crm/v3/objects/pets?properties=name, type, history', {
+        const response = await axios.get('https://api.hubapi.com/crm/v3/objects/pets?properties=pet_id, name, type, history', {
             headers: {
                 Authorization: `Bearer ${process.env.PRIVATE_APP_ACCESS}`,
                 'Content-Type': 'application/json'
@@ -38,29 +38,19 @@ app.get('/update-pet', (req, res) => {
 
 // TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
 
-app.post('/update-pet', async (req, res) => {
-    const { name, type, history } = req.body;
-    const petData = {
-        properties: {
-            name,
-            type,
-            history
-        }
-    };
-
-    try {
-        await axios.post('https://api.hubapi.com/crm/v3/objects/pets?properties=id, name, type, history', petData, {
-            headers: {
-                Authorization: `Bearer ${process.env.PRIVATE_APP_ACCESS}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        res.redirect('/');
-    } catch (error) {
-        console.error("Error creating pet:", error.response?.data || error.message);
-        res.status(500).send("Error creating pet");
-    }
+app.post("/update-pet", async (req, res) => {
+  const { pet_id, name, type, history } = req.body;
+  try {
+    await axios.patch(
+      'https://api.hubapi.com/crm/v3/objects/2-45749207',
+      { properties: { pet_id, name, type, history } },
+      { headers: { Authorization: `Bearer ${process.env.PRIVATE_APP_ACCESS}`, "Content-Type": "application/json" } }
+    );
+    res.redirect("/");
+  } catch (error) {
+    console.error("Error creating record:", error);
+    res.status(500).send("Error creating CRM record.");
+  }
 });
 
 /** 
